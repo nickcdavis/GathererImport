@@ -34,6 +34,8 @@
             this.txtSets = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.gotoGitHub = new System.Windows.Forms.LinkLabel();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtError
@@ -45,7 +47,7 @@
             this.txtError.Multiline = true;
             this.txtError.Name = "txtError";
             this.txtError.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtError.Size = new System.Drawing.Size(479, 281);
+            this.txtError.Size = new System.Drawing.Size(479, 307);
             this.txtError.TabIndex = 0;
             // 
             // cmdGrabPrices
@@ -82,10 +84,22 @@
             // panel1
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.Location = new System.Drawing.Point(294, 299);
+            this.panel1.Controls.Add(this.gotoGitHub);
+            this.panel1.Location = new System.Drawing.Point(294, 325);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(488, 61);
+            this.panel1.Size = new System.Drawing.Size(488, 35);
             this.panel1.TabIndex = 4;
+            // 
+            // gotoGitHub
+            // 
+            this.gotoGitHub.AutoSize = true;
+            this.gotoGitHub.Location = new System.Drawing.Point(241, 10);
+            this.gotoGitHub.Name = "gotoGitHub";
+            this.gotoGitHub.Size = new System.Drawing.Size(226, 13);
+            this.gotoGitHub.TabIndex = 0;
+            this.gotoGitHub.TabStop = true;
+            this.gotoGitHub.Text = "https://github.com/nickcdavis/GathererImport";
+            this.gotoGitHub.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.gotoGitHub_LinkClicked);
             // 
             // Form1
             // 
@@ -100,6 +114,8 @@
             this.Name = "Form1";
             this.Text = "Gatherer Import";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -112,6 +128,7 @@
         private System.Windows.Forms.TextBox txtSets;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.LinkLabel gotoGitHub;
     }
 }
 
