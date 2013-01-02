@@ -31,7 +31,9 @@ namespace GathererImport
         {
 
             StringBuilder jsonItems = new StringBuilder();
-
+            
+            StringBuilder jsonResults = new StringBuilder();
+            jsonResults.Append("[");
             //Split the list of sets into an array.
             string[] setArray = txtSets.Text.Split('\n');
 
@@ -99,6 +101,8 @@ namespace GathererImport
                                     , cardNumber
                                     , cardArtist
                                     , cardFoil));
+                                
+                                
                             }
                             catch (Exception ex)
                             {
@@ -108,8 +112,8 @@ namespace GathererImport
                         }
 
                         jsonItems.Append("}}");
-
-
+                        jsonResults.AppendLine(",");
+                        jsonResults.Append(jsonItems);
                         ///////////////////////////////////////////////////
                         ///////////////////////////////////////////////////
                         //DO SOMETHING WITH JSON. USE YOUR IMAGINATION!!!//
