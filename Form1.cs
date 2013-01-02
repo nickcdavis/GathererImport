@@ -14,6 +14,7 @@ namespace GathererImport
 {
     public partial class Form1 : Form
     {
+        GathererImport.Gatherer g = new Gatherer();
         public Form1()
         {
             InitializeComponent();
@@ -21,178 +22,64 @@ namespace GathererImport
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            Action bgload = delegate()
+            {
+                
+                this.checkedListBox1.Invoke((Action)delegate()
+                {
+                    this.checkedListBox1.Items.AddRange(g.gatherSets().ToArray());
+                });
+            };
+            bgload.Invoke();
         }
         private void cmdGrabPrices_Click(object sender, EventArgs e)
         {
-            gather();
-        }
-
-        private void gather()
-        {
-
-            StringBuilder jsonItems = new StringBuilder();
-            
-            StringBuilder jsonResults = new StringBuilder();
-            jsonResults.Append("[");
-            //Split the list of sets into an array.
-            string[] setArray = txtSets.Text.Split('\n');
-
-            //Get Gatherer cards and turn them into JSON
-
-            txtError.Text += "Receiving cards from Gatherer..." + "\r\n";
-
-            //Loop through the array of sets.
-            foreach (string set in setArray)
+            ((Action) delegate()
             {
-                jsonItems = new StringBuilder();
-
-                string[] setOptions = set.Split('|');
-
-                txtError.Text += "Receiving " + setOptions[0] + "..." + "\r\n";
-
-                try
+                Gatherer g2 = new Gatherer();
+                g2.onGatherCardProgress += new Gatherer.GatherCardProgress(g2_onGatherCardProgressEvent);
+                g2.onGatherCardCompleteEvent += new Gatherer.GatherCardCompleteEvent(g2_onGatherCardCompleteEvent);
+                List<string> sets = new List<string>();
+                if (this.checkedListBox1.CheckedItems.Count > 0)
                 {
-                    //Web Request to Gatherer's Checklist. Unfortunately, this checklist 
-                    //does not display all card information. However, it's the 
-                    //easiest to pull from. 
-                    System.Net.WebRequest webReq = System.Net.WebRequest.Create("http://gatherer.wizards.com/Pages/Search/Default.aspx?output=checklist&action=advanced&set=%5b%22" + setOptions[0].Replace(" ", "+") + "%22%5d");
-                    System.Net.WebResponse webRes = webReq.GetResponse();
-                    System.IO.Stream mystream = webRes.GetResponseStream();
-                    if (mystream != null)
+                    foreach (string set in this.checkedListBox1.CheckedItems)
                     {
-                        HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-                        doc.Load(mystream);
-
-                        jsonItems.Append("{\"items\": {");
-
-                        //Loop through each card and pull information.
-                        foreach (HtmlNode parentNode in doc.DocumentNode.SelectNodes("//table")[0].SelectNodes("tr[@class='cardItem']"))
+                        SetMeta sm = g2.gatherSetMeta(set);
+                        this.Invoke((Action)delegate()
                         {
-                            try
-                            {
-                                string cardParent = "Magic: The Gathering";
-                                string cardSchemaType = "card";
-                                string cardTitle = parentNode.SelectNodes("td[@class='name']")[0].InnerText.ToString();
-                                string cardExpansionAbreviation = setOptions[1].Trim();
-                                string cardManaCost = "";
-                                string cardText = "";
-                                string cardFlavorText = "";
-                                string cardPT = "";
-                                string cardRarity = getRarity(parentNode.SelectNodes("td[@class='rarity']")[0].InnerText.ToString());
-                                string cardNumber = parentNode.SelectNodes("td[@class='number']")[0].InnerText.ToString();
-                                string cardArtist = parentNode.SelectNodes("td[@class='artist']")[0].InnerText.ToString();
-                                string cardFoil = "";
-
-                                string cardSoftID = cardParent + "|" + cardExpansionAbreviation + "|" + cardTitle + "|" + cardFoil;
-
-                                //Use the jsonItem Schema to create a new card item.
-                                jsonItems.Append(string.Format(jsonItem
-                                    , cardSoftID
-                                    , cardParent
-                                    , cardSchemaType
-                                    , cardTitle
-                                    , cardExpansionAbreviation
-                                    , cardManaCost
-                                    , ""
-                                    , cardText
-                                    , cardFlavorText
-                                    , cardPT
-                                    , cardRarity
-                                    , cardNumber
-                                    , cardArtist
-                                    , cardFoil));
-                                
-                                
-                            }
-                            catch (Exception ex)
-                            {
-                                //Generate an error if a card does not come through correctly.
-                                //txtError.Text += "ERROR WITH RECORDING PRICE\r\n";
-                            }
-                        }
-
-                        jsonItems.Append("}}");
-                        jsonResults.AppendLine(",");
-                        jsonResults.Append(jsonItems);
-                        ///////////////////////////////////////////////////
-                        ///////////////////////////////////////////////////
-                        //DO SOMETHING WITH JSON. USE YOUR IMAGINATION!!!//
-                        ///////////////////////////////////////////////////
-                        ///////////////////////////////////////////////////
-
-
-//                                               ,---.
-//                                              /    |
-//                                             /     |
-//                                            /      |
-//                                           /       |
-//                                      ___,'        |
-//                                    <  -'          :
-//                                     `-.__..--'``-,_\_
-//                                        |o/ <o>` :,.)_`>
-//                                        :/ `     ||/)
-//                                        (_.).__,-` |\
-//                                        /( `.``   `| :
-//                                        \'`-.)  `  ; ;
-//                                        | `       /-<
-//                                        |     `  /   `.
-//                        ,-_-..____     /|  `    :__..-'\
-//                       /,'-.__\\  ``-./ :`      ;       \
-//                       `\ `\  `\\  \ :  (   `  /  ,   `. \
-//                         \` \   \\   |  | `   :  :     .\ \
-//                          \ `\_  ))  :  ;     |  |      ): :
-//                         (`-.-'\ ||  |\ \   ` ;  ;       | |
-//                          \-_   `;;._   ( `  /  /_       | |
-//                           `-.-.// ,'`-._\__/_,'         ; |
-//                              \:: :     /     `     ,   /  |
-//                               || |    (        ,' /   /   |
-//                               ||                ,'   /    |
-
-
+                            this.progressBar1.Value = 0;
+                            this.progressBar1.Maximum = sm.totalCards;
+                        });
+                        g2.gatherCardMultiverseIds(Set: set);
                     }
                 }
-                catch (Exception ex)
-                {
-                    txtError.Text += "ERROR WITH RECORDING SET: " + setOptions[0] + "\r\n";
-                }
-            }
+            }).BeginInvoke(new AsyncCallback(delegate(IAsyncResult ar) { }), new object());
+            
         }
 
-        private string getRarity(string rareIn)
+        void g2_onGatherCardCompleteEvent()
         {
-            switch (rareIn)
+            this.Invoke((Action)delegate()
             {
-                case "M":
-                    return "Mythic Rare";
-                case "R":
-                    return "Rare";
-                case "U":
-                    return "Uncommon";
-                case "C":
-                    return "Common";
-                default:
-                    return "";
-            }
+                this.progressBar1.Value = this.progressBar1.Maximum;
+            });
         }
-        private string jsonItem = @"
-		        ""item"": {{
-			        ""title"": ""{0}"",
-			        ""parent"": ""{1}"",
-			        ""schemaType"": ""{2}"",
-			        ""details"": {{
-					        ""title"": ""{3}"",
-					        ""expansionAbreviation"": ""{4}"",
-					        ""manaCost"": ""{5}"",
-					        ""convertedManaCost"": ""{6}"",
-					        ""cardText"": ""{7}"",
-					        ""flavorText"": ""{8}"",
-					        ""pt"": ""{9}"",
-					        ""rarity"": ""{10}"",
-					        ""cardNumber"": ""{11}"",
-					        ""artist"": ""{12}"",
-					        ""foil"": ""{13}""
-				        }}
-		        }},";
+
+        bool g2_onGatherCardProgressEvent(CardData Card, int index, int totalCards)
+        {
+            ((Action)delegate()
+            {
+                Card = CardData.gather(Card.multiverseID);
+                this.Invoke((Action)delegate()
+                {
+                    System.Web.Script.Serialization.JavaScriptSerializer j = new System.Web.Script.Serialization.JavaScriptSerializer();
+
+                    this.txtError.Text += j.Serialize(Card) + Environment.NewLine;
+                    this.progressBar1.PerformStep();
+                });
+            }).BeginInvoke(new AsyncCallback((Action<IAsyncResult>)delegate(IAsyncResult ar) { }), new object());
+            return true;
+        }
 
         private void gotoGitHub_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {

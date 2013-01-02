@@ -1,4 +1,5 @@
 namespace GathererImport {
+    
     public class CardData {
         //public string cardParent = "Magic: The Gathering";
         public string multiverseID = "";
