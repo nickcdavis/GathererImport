@@ -35,6 +35,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.gotoGitHub = new System.Windows.Forms.LinkLabel();
+            this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -43,11 +45,12 @@
             this.txtError.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtError.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.txtError.Location = new System.Drawing.Point(294, 12);
             this.txtError.Multiline = true;
             this.txtError.Name = "txtError";
             this.txtError.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtError.Size = new System.Drawing.Size(479, 307);
+            this.txtError.Size = new System.Drawing.Size(479, 275);
             this.txtError.TabIndex = 0;
             // 
             // cmdGrabPrices
@@ -101,11 +104,28 @@
             this.gotoGitHub.Text = "https://github.com/nickcdavis/GathererImport";
             this.gotoGitHub.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.gotoGitHub_LinkClicked);
             // 
+            // checkedListBox1
+            // 
+            this.checkedListBox1.FormattingEnabled = true;
+            this.checkedListBox1.Location = new System.Drawing.Point(12, 140);
+            this.checkedListBox1.Name = "checkedListBox1";
+            this.checkedListBox1.Size = new System.Drawing.Size(276, 214);
+            this.checkedListBox1.TabIndex = 5;
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(295, 295);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(478, 24);
+            this.progressBar1.TabIndex = 6;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(773, 366);
+            this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.checkedListBox1);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtSets);
@@ -129,6 +149,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.LinkLabel gotoGitHub;
+        private System.Windows.Forms.CheckedListBox checkedListBox1;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }
 
